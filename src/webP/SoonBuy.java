@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import sql_c.SqlCont;
+
 /**
  * Servlet implementation class SoonBuy
  */
@@ -34,7 +36,17 @@ public class SoonBuy extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html; charset=UTF-8");response.setContentType("text/html; charset=UTF-8");
 
-		ResultSet rs=null;
+		if(SqlCont.con==null)SqlCont.login();
+		else {
+			try {
+				if(SqlCont.con.isClosed()==false)SqlCont.login();
+			} catch (SQLException e1) {
+				// TODO 自動生成された catch ブロック
+				SqlCont.login();
+			}
+		}
+		
+		ResultSet rs=SqlCont.SoonBuy();
 
 		PrintWriter out=response.getWriter();
 

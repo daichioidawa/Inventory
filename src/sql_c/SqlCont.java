@@ -8,8 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SqlCont {
-	static Connection con = null;
-	static PreparedStatement stmt = null;
+	public static Connection con = null;
+	public static PreparedStatement stmt = null;
 
 	static Statement st=null;
 	public static void login() {
@@ -90,10 +90,10 @@ public class SqlCont {
 	}
 
 	public static ResultSet SoonCons() {
-		String sql = "select 品名.品名,購入日+ interval 消費期限 day as 消費期限日\r\n" + 
-				",個数\r\n" + 
-				",DATEDIFF(購入日+ interval 消費期限 day,current_date()) as 期限日数\r\n" + 
-				"from 消費状況,品名\r\n" + 
+		String sql = "select 品名.品名,購入日+ interval 消費期限 day as 消費期限日\r\n" +
+				",個数\r\n" +
+				",DATEDIFF(購入日+ interval 消費期限 day,current_date()) as 期限日数\r\n" +
+				"from 消費状況,品名\r\n" +
 				"where 品名.品名=消費状況.品名 having 期限日数<=7;";
 		ResultSet rs = null;
 		try {
@@ -106,6 +106,6 @@ public class SqlCont {
 		return rs;
 	}
 	public static void BuyObject(String ob,String date,int n) {
-		
+
 	}
 }
