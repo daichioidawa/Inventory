@@ -12,16 +12,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class Zaiko
+ * Servlet implementation class SoonBuy
  */
-@WebServlet("/Zaiko")
-public class Zaiko extends HttpServlet {
+@WebServlet("/SoonBuy")
+public class SoonBuy extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Zaiko() {
+    public SoonBuy() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -40,15 +40,15 @@ public class Zaiko extends HttpServlet {
 
 		out.println("<html>");
 		out.println("<head>");
-		out.println("<title>在庫を表示</title>");
+		out.println("<title>買い足しが必要な物</title>");
 		out.println("</head>");
 		out.println("<body>");
-		out.println("<h1>在庫を表示</h1>");
+		out.println("<h1>買い足しが必要な物</h1>");
 		//表をsqlから作成(from)
 		out.println("<table border=\"1\">");
 		out.println("<tr>");
 		out.println("<td>品名</td>");
-		out.println("<td>在庫</td>");
+		out.println("<td>残り数量</td>");
 		out.println("</tr>");
 
 		try {
