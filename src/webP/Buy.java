@@ -53,6 +53,7 @@ public class Buy extends HttpServlet {
 		out.println("</head>");
 		out.println("<body>");
 		out.println("<h1>購入情報を入力してください</h1>");
+		SqlCont.ChooseBuy(out);
 		out.println("</body>");
 		out.println("</html>");
 	}

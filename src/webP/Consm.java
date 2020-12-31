@@ -54,6 +54,8 @@ public class Consm extends HttpServlet {
 		out.println("</head>");
 		out.println("<body>");
 		out.println("<h1>消費欄</h1>");
+		
+		
 		out.println("</body>");
 		out.println("</html>");
 	}
