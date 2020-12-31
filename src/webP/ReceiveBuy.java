@@ -2,7 +2,6 @@ package webP;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.servlet.ServletException;
@@ -14,16 +13,16 @@ import javax.servlet.http.HttpServletResponse;
 import sql_c.SqlCont;
 
 /**
- * Servlet implementation class SoonCons
+ * Servlet implementation class ReceiveBuy
  */
-@WebServlet("/SoonCons")
-public class SoonCons extends HttpServlet {
+@WebServlet("/ReceiveBuy")
+public class ReceiveBuy extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public SoonCons() {
+    public ReceiveBuy() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -45,39 +44,22 @@ public class SoonCons extends HttpServlet {
 				SqlCont.login();
 			}
 		}
-		ResultSet rs=SqlCont.SoonCons();
+		String class_name=request.getParameter("cla");
+		String inst_name=request.getParameter("shi_"+class_name);
+		int number=Integer.parseInt(request.getParameter("num"));
 
 		PrintWriter out=response.getWriter();
 
 		out.println("<html>");
 		out.println("<head>");
-		out.println("<title>消費期限が近い品物</title>");
+		out.println("<title>購入履歴の入力が完了しました</title>");
 		out.println("</head>");
 		out.println("<body>");
-		out.println("<h1>消費期限が近い品物</h1>");
-		//表をsqlから作成(from)
-		out.println("<table border=\"1\">");
-		out.println("<tr>");
-		out.println("<td>品名</td>");
-		out.println("<td>個数</td>");
-		out.println("<td>残り日数</td>");
+		out.println("<h1>完了しました</h1>");
+		out.println("分類は"+class_name+"<br>");
+		out.println("品名は"+inst_name+"<br>");
+		out.println("数は"+number+"<br>");
 
-		out.println("</tr>");
-
-		try {
-			while(rs.next()) {
-				out.println("<tr>");
-				out.println("<td>"+rs.getString(1)+"</td>");
-				out.println("<td>"+rs.getInt(3)+"</td>");
-				out.println("<td>"+rs.getInt(4)+"</td>");
-				out.println("</tr>");
-			}
-		} catch (SQLException e) {
-			// TODO 自動生成された catch ブロック
-
-		}
-		out.println("</table>");
-		//表をsqlから作成(until)
 		out.println("</body>");
 		out.println("</html>");
 	}
