@@ -47,6 +47,8 @@ public class ReceiveBuy extends HttpServlet {
 		String class_name=request.getParameter("cla");
 		String inst_name=request.getParameter("shi_"+class_name);
 		int number=Integer.parseInt(request.getParameter("num"));
+		String date=request.getParameter("dt");
+		int id=Integer.parseInt(request.getParameter("id"));
 
 		PrintWriter out=response.getWriter();
 
@@ -59,6 +61,8 @@ public class ReceiveBuy extends HttpServlet {
 		out.println("分類は"+class_name+"<br>");
 		out.println("品名は"+inst_name+"<br>");
 		out.println("数は"+number+"<br>");
+		out.println("id:"+id+"<br>");
+		SqlCont.BuyObject(id,inst_name, date, number);
 
 		out.println("</body>");
 		out.println("</html>");

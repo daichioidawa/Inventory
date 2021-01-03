@@ -7,7 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SqlCont {
@@ -19,6 +21,7 @@ public class SqlCont {
 		try {
 			//Class.forName("com.mysql.cj.jdbc.Driver");
 			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/example?characterEncoding=UTF-8&serverTimezone=JST", "root", "KILLsqlMe0228jkjk");
+
 			st = con.createStatement();
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
@@ -167,7 +170,9 @@ public class SqlCont {
 					"});\r\n" +
 					"</script>");
 
+
 			out.println("<form action=\"/Inventory/"+link+"\" method=\"get\">");
+			out.println("ID：<input type=\"text\" name=\"id\" value=\""+ID_isuue()+"\"><br><br>");
 			out.println("<div class=\"pulldownset\">");
 			out.println("分類を選択してください");
 			out.println("	<select class=\"mainselect\" name=\"cla\">");
@@ -175,9 +180,8 @@ public class SqlCont {
 			for(int i=0;i<Obj.length;i++) {
 				out.println("		<option value=\""+str[i]+"\">"+str[i]+"</option>");
 			}
-			out.println("</select>");
-			out.println("<br>");
-			out.println("品名を選択してください");
+			out.println("</select><br>");
+			out.println("<br>品名を選択してください");
 			for(int j=0;j<Obj.length;j++) {
 				out.println("<select id=\""+str[j]+"\" name=\"shi_"+str[j]+"\" class=\"subbox\">");
 				out.println("	<option value=\"\">選択してください</option>");
@@ -187,11 +191,12 @@ public class SqlCont {
 				out.println("</select>");
 
 			}
-			out.println("<br><br><br>");
-			out.println("個数を入力してください");
-			out.println("<p><input type=\"number\" name=\"num\"></p>\n"
-					+ "<p><input type=\"submit\" value=\"送信\" id=\"send\">\n"
-					+ "</form>\n");
+			out.println("<br><br>個数を入力してください");
+			out.println("<input type=\"number\" name=\"num\"><br>");
+			out.println("<br>購入日を選択してください");
+			out.println("<input type=\"date\" name=\"dt\" value=\""+Get_date()+"\"><br>");
+			out.println("<p><input type=\"submit\" value=\"送信\" id=\"send\">");
+			out.println("</form>");
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
@@ -209,6 +214,7 @@ public class SqlCont {
 			rs=st.executeQuery("select 品名.分類 from 消費状況,品名 where 品名.品名=消費状況.品名 group by 品名.分類;");
 			String str[]=new String[cn];
 			List<String> Obj[] = new ArrayList[cn];
+
 			for(int i=0;i<cn;i++) {
 				Obj[i] = new ArrayList<String>();
 				rs.next();
@@ -259,6 +265,7 @@ public class SqlCont {
 					"</script>");
 
 			out.println("<form action=\"/Inventory/"+link+"\" method=\"get\">");
+			out.println("ID：<input type=\"text\" name=\"id\" value=\""+ID_isuue2()+"\"><br><br>");
 			out.println("<div class=\"pulldownset\">");
 			out.println("分類を選択してください");
 			out.println("	<select class=\"mainselect\" name=\"cla\">");
@@ -266,9 +273,8 @@ public class SqlCont {
 			for(int i=0;i<Obj.length;i++) {
 				out.println("		<option value=\""+str[i]+"\">"+str[i]+"</option>");
 			}
-			out.println("</select>");
-			out.println("<br>");
-			out.println("品名を選択してください");
+			out.println("</select><br>");
+			out.println("<br>品名を選択してください");
 			for(int j=0;j<Obj.length;j++) {
 				out.println("<select id=\""+str[j]+"\" name=\"shi_"+str[j]+"\" class=\"subbox\">");
 				out.println("	<option value=\"\">選択してください</option>");
@@ -276,20 +282,132 @@ public class SqlCont {
 					out.println("	<option value=\""+Obj[j].get(i)+"\">"+Obj[j].get(i)+"</option>");
 				}
 				out.println("</select>");
-
 			}
-			out.println("<br><br><br>");
-			out.println("個数を入力してください");
-			out.println("<p><input type=\"number\" name=\"num\"></p>\n"
-					+ "<p><input type=\"submit\" value=\"送信\" id=\"send\">\n"
-					+ "</form>\n");
+
+
+
+			out.println("<br><br>個数を入力してください");
+			out.println("<input type=\"number\" name=\"num\"><br>");
+			out.println("<br>消費日を選択してください");
+			out.println("<input type=\"date\" name=\"dt\" value=\""+Get_date()+"\"><br><br>");
+			out.println("<p><input type=\"submit\" value=\"送信\" id=\"send\">");
+			out.println("</form>");
+
+
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
 		out.println("</div>");
 	}
-	public static void BuyObject(String ob,String date,int n) {
+	public static void BuyObject(int id, String ob,String date,int n) {
+		ResultSet rst=null;
+		String sql1="select * from 購入履歴 where id ="+id+";";
+		System.out.println(sql1);
+		try {
 
+			rst= st.executeQuery(sql1);
+
+			if(rst.next()==true)return;
+		} catch (SQLException e1) {
+			// TODO 自動生成された catch ブロック
+			e1.printStackTrace();
+		}
+
+		String sql = "insert into 購入履歴 values("+id+",\""+ob+"\",\""+date+"\","+n+");";
+		System.out.println(sql);
+		int rs = 0;
+		try {
+			rs=st.executeUpdate(sql);
+			sql = "insert into 消費状況 values(\""+ob+"\",\""+date+"\","+n+");";
+			rs=st.executeUpdate(sql);
+
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+
+	}
+	public static String ConsObject(int id, String ob,String date,int n) {
+		ResultSet rst=null;
+		int num=n;
+		System.out.println("開始");
+		String sql1="select * from 消費履歴 where id ="+id+";";
+		System.out.println(sql1);
+		try {
+			rst= st.executeQuery(sql1);
+			if(rst.next()==true)
+				return "すでに存在します";
+		} catch (SQLException e1) {
+			// TODO 自動生成された catch ブロック
+			e1.printStackTrace();
+		}
+		try {
+			rst=st.executeQuery("select * from 消費状況 where 品名=\""+ob+"\" order by 購入日;");
+			con.setAutoCommit(false);
+			int za;
+			while(rst.next()) {
+				za=rst.getInt(4);
+				System.out.println(za+" : "+num);
+				if(za<=num) {
+					st.executeUpdate("delete from 消費状況 where id="+rst.getInt(1)+";");//削除
+					num-=za;
+				}else {
+					st.executeUpdate("update 消費状況 set 個数 = "+(za-num)+" where id = "+rst.getInt(1)+";");//アップデート
+					num=0;
+					break;
+				}
+			}
+			if(num!=0) {
+				con.rollback();
+				return "在庫が足りません。在庫を確認してください";
+			}
+
+			con.commit();
+			con.setAutoCommit(true);
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		return "何か起きた";
+	}
+	public static String Get_date() {
+		Date dt=new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy'-'MM'-'dd");
+		return sdf.format(dt);
+	}
+	public static int ID_isuue() {
+		int id=0;
+		while(true) {
+			id=Math.abs(new java.util.Random().nextInt());
+			String sql = "select * from 購入履歴 where id="+id+";";
+			ResultSet rs = null;
+			try {
+				rs=st.executeQuery(sql);
+				if(rs.next()==false)
+					break;
+			} catch (SQLException e) {
+				// TODO 自動生成された catch ブロック
+				e.printStackTrace();
+			}
+		}
+		return id;
+	}
+	public static int ID_isuue2() {
+		int id=0;
+		while(true) {
+			id=Math.abs(new java.util.Random().nextInt());
+			String sql = "select * from 消費履歴 where id="+id+";";
+			ResultSet rs = null;
+			try {
+				rs=st.executeQuery(sql);
+				if(rs.next()==false)
+					break;
+			} catch (SQLException e) {
+				// TODO 自動生成された catch ブロック
+				e.printStackTrace();
+			}
+		}
+		return id;
 	}
 }

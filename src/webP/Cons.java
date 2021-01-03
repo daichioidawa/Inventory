@@ -53,7 +53,7 @@ public class Cons extends HttpServlet {
 		out.println("<title>消費</title>");
 		out.println("</head>");
 		out.println("<body>");
-		out.println("<h1>消費情報を入力してください</h1>");
+		out.println("<h1>消費情報を入力してくれ</h1>");
 		SqlCont.ChooseCons(out,"ReceiveCons");
 		out.println("</body>");
 		out.println("</html>");

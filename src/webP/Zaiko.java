@@ -67,7 +67,7 @@ public class Zaiko extends HttpServlet {
 			while(rs.next()) {
 				out.println("<tr>");
 				out.println("<td>"+rs.getString(1)+"</td>");
-				out.println("<td>"+rs.getInt(2)+"</td>");
+				out.println("<td>"+rs.getDouble(2)+"</td>");
 				out.println("</tr>");
 			}
 		} catch (SQLException e) {
