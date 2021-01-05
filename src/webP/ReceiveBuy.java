@@ -57,7 +57,7 @@ public class ReceiveBuy extends HttpServlet {
 		out.println("<title>購入履歴の入力が完了しました</title>");
 		out.println("</head>");
 		out.println("<body>");
-		out.println("<h1>完了しました</h1>");
+		out.println("<h1>"+SqlCont.BuyObject(id, inst_name, date, number)+"</h1>");
 		out.println("分類は"+class_name+"<br>");
 		out.println("品名は"+inst_name+"<br>");
 		out.println("数は"+number+"<br>");

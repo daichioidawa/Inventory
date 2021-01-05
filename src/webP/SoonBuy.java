@@ -45,7 +45,7 @@ public class SoonBuy extends HttpServlet {
 				SqlCont.login();
 			}
 		}
-		
+
 		ResultSet rs=SqlCont.SoonBuy();
 
 		PrintWriter out=response.getWriter();
@@ -67,7 +67,7 @@ public class SoonBuy extends HttpServlet {
 			while(rs.next()) {
 				out.println("<tr>");
 				out.println("<td>"+rs.getString(1)+"</td>");
-				out.println("<td>"+rs.getInt(2)+"</td>");
+				out.println("<td>"+rs.getInt(3)+"</td>");
 				out.println("</tr>");
 			}
 		} catch (SQLException e) {

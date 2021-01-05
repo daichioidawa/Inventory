@@ -83,7 +83,7 @@ public class SqlCont {
 		return rs;
 	}
 	public static ResultSet SoonBuy() {
-		String sql = "select 品名.品名,品名.警告個数,sum(個数) as 合計 from 品名,消費状況 where 品名.品名=消費状況.品名 group by 品名.品名 having sum(個数)<=品名.警告個数;";
+		String sql = "select 品名,分類,在庫 from 品名 where 警告個数>=在庫;";
 		ResultSet rs = null;
 		try {
 			rs=st.executeQuery(sql);
@@ -300,41 +300,50 @@ public class SqlCont {
 		}
 		out.println("</div>");
 	}
-	public static void BuyObject(int id, String ob,String date,int n) {
+	public static String BuyObject(int id, String ob,String date,int n) {
 		ResultSet rst=null;
 		String sql1="select * from 購入履歴 where id ="+id+";";
 		System.out.println(sql1);
+		int za=0;
 		try {
-
 			rst= st.executeQuery(sql1);
-
-			if(rst.next()==true)return;
+			if(rst.next()==true)return "すでに存在します";
 		} catch (SQLException e1) {
 			// TODO 自動生成された catch ブロック
 			e1.printStackTrace();
 		}
 
-		String sql = "insert into 購入履歴 values("+id+",\""+ob+"\",\""+date+"\","+n+");";
-		System.out.println(sql);
+
 		int rs = 0;
 		try {
+			String sql = "insert into 購入履歴 values("+id+",\""+ob+"\",\""+date+"\","+n+");";
+			System.out.println(sql);
 			rs=st.executeUpdate(sql);
-			sql = "insert into 消費状況 values(\""+ob+"\",\""+date+"\","+n+");";
+			sql = "insert into 消費状況 values("+id+",\""+ob+"\",\""+date+"\","+n+");";
 			rs=st.executeUpdate(sql);
+
+			sql1="select sum(個数) from 消費状況 where 品名=\""+ob+"\" group by 品名;";
+			rst=st.executeQuery(sql1);
+			rst.next();
+			za= rst.getInt(1);
+			sql1="update 品名 set 在庫="+za+" where 品名=\""+ob+"\";";
+			st.executeUpdate(sql1);
+			return "完了しました";
 
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
-
+		return "何か問題が起きました";
 	}
 	public static String ConsObject(int id, String ob,String date,int n) {
 		ResultSet rst=null;
+		String sql1=null;
+		String ret;
 		int num=n;
-		System.out.println("開始");
-		String sql1="select * from 消費履歴 where id ="+id+";";
-		System.out.println(sql1);
 		try {
+			sql1="select * from 消費履歴 where id ="+id+";";
+			System.out.println(sql1);
 			rst= st.executeQuery(sql1);
 			if(rst.next()==true)
 				return "すでに存在します";
@@ -342,34 +351,53 @@ public class SqlCont {
 			// TODO 自動生成された catch ブロック
 			e1.printStackTrace();
 		}
+		//
 		try {
-			rst=st.executeQuery("select * from 消費状況 where 品名=\""+ob+"\" order by 購入日;");
 			con.setAutoCommit(false);
-			int za;
+			sql1="select id,個数 from 消費状況 where 品名=\""+ob+"\" order by 購入日;";
+			System.out.println(sql1);
+			rst=st.executeQuery(sql1);
+			Statement st2=con.createStatement();
+			int za=0;
+			int sid=0;
+			sql1="insert into 消費履歴 values("+id+",\""+ob+"\",\""+date+"\","+n+");";
+			st2.executeUpdate(sql1);
 			while(rst.next()) {
-				za=rst.getInt(4);
-				System.out.println(za+" : "+num);
-				if(za<=num) {
-					st.executeUpdate("delete from 消費状況 where id="+rst.getInt(1)+";");//削除
-					num-=za;
-				}else {
-					st.executeUpdate("update 消費状況 set 個数 = "+(za-num)+" where id = "+rst.getInt(1)+";");//アップデート
+				System.out.println(rst.getInt(1)+" : "+rst.getInt(2));
+				za=rst.getInt(2);
+				sid=rst.getInt(1);
+				if(za>num) {
+					sql1="update 消費状況 set 個数="+(za-num)+" where id="+sid+";";
+					st2.executeUpdate(sql1);
 					num=0;
 					break;
+				}else{
+					sql1="delete from 消費状況 where id="+sid+";";
+					st2.executeUpdate(sql1);
+					num-=za;
 				}
+
 			}
 			if(num!=0) {
 				con.rollback();
-				return "在庫が足りません。在庫を確認してください";
+				con.setAutoCommit(true);
+				return "在庫が足りません";
+			}else {
+				con.commit();
+				con.setAutoCommit(true);
+				sql1="select sum(個数) from 消費状況 where 品名=\""+ob+"\" group by 品名;";
+				rst=st.executeQuery(sql1);
+				rst.next();
+				za= rst.getInt(1);
+				sql1="update 品名 set 在庫="+za+" where 品名=\""+ob+"\";";
+				st2.executeUpdate(sql1);
+				return "完了しました";
 			}
-
-			con.commit();
-			con.setAutoCommit(true);
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
-		return "何か起きた";
+		return "id:"+id+" ob:"+ob+" date;"+date+" n:"+n;
 	}
 	public static String Get_date() {
 		Date dt=new Date();
